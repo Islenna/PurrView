@@ -1,0 +1,1 @@
+{"name":"frontend","version":"0.0.1","private":true,"scripts":{"start":"node node_modules/react-native/local-cli/cli.js start"},"dependencies":{"react-native":"0.73.5","react-native-camera":"^4.2.1","react-webcam":"^7.2.0"}}
