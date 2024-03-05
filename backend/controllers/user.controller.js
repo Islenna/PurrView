@@ -53,6 +53,7 @@ module.exports = {
                     token: userToken
                 });
                 console.log('User logged in successfully:', user.email);
+                console.log('User token:', userToken)
         } catch (err) {
             console.error('Error during login:', err);
             res.status(500).json({ error: 'Server error' });

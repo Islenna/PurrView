@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Button, Text } from 'react-native'
 import { Input } from 'react-native-elements'
 import { useForm, Controller } from 'react-hook-form';
+import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 
 
@@ -10,7 +11,7 @@ const PatientForm = () => {
 
     const onSubmit = async (data: Record<string, any>) => {
         try {
-            const response = await axios.post('http://localhost:8000/api/patients', data);
+            const response = await axios.post('http://localhost:8000/api/pets/new', data);
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const message = err.response?.data?.message ?? 'An unexpected error occurred';
@@ -22,9 +23,13 @@ const PatientForm = () => {
     };
 
 
+    const speciesOptions = ['Dog', 'Cat']
+    const genderOptions = ['Male', 'Female', 'Spayed', 'Neutered', 'Unknown']
+
     return (
         <View>
             <Text>PatientForm</Text>
+            <Text>Name</Text>
             <Controller
                 control={control}
                 render={({ field: { onChange, onBlur, value } }) => (
@@ -39,11 +44,49 @@ const PatientForm = () => {
                 name="name"
                 rules={{ required: true }}
             />
+            <Text>Species</Text>
+            <Controller
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                    <Picker
+                        selectedValue={value}
+                        onValueChange={onChange}
+                        onBlur={onBlur}
+                        id="species"
+                    >
+                        {speciesOptions.map((species) => (
+                            <Picker.Item label={species} value={species} key={species} />
+                        ))}
+                    </Picker>
+                )}
+                name="species"
+                rules={{ required: true }}
+            />
+            <Text>Gender</Text>
+            <Controller
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                    <Picker
+                        selectedValue={value}
+                        onValueChange={onChange}
+                        onBlur={onBlur}
+                        id="gender"
+                    >
+                        {genderOptions.map((gender) => (
+                            <Picker.Item label={gender} value={gender} key={gender}
+                            />
+                        ))}
+                    </Picker>
+                )}
+                name="gender"
+                rules={{ required: true }}
+            />
+            <Text>Age in Years</Text>
             <Controller
                 control={control}
                 render={({ field: { onChange, onBlur, value } }) => (
                     <Input
-                        placeholder="ageYear"
+                        placeholder="age in years (approximate is okay)"
                         onBlur={onBlur}
                         onChangeText={onChange}
                         value={value}
@@ -53,11 +96,12 @@ const PatientForm = () => {
                 name="ageYear"
                 rules={{ required: true }}
             />
+            <Text>Age in Months</Text>
             <Controller
                 control={control}
                 render={({ field: { onChange, onBlur, value } }) => (
                     <Input
-                        placeholder="ageMonth"
+                        placeholder="age in months (approximate is okay)"
                         onBlur={onBlur}
                         onChangeText={onChange}
                         value={value}
@@ -68,20 +112,7 @@ const PatientForm = () => {
                 rules={{ required: true }}
             />
 
-            <Controller
-                control={control}
-                render={({ field: { onChange, onBlur, value } }) => (
-                    <Input
-                        placeholder="species"
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        value={value}
-                        id="species"
-                    />
-                )}
-                name="species"
-                rules={{ required: true }}
-            />
+            <Text>Breed</Text>
             <Controller
                 control={control}
                 render={({ field: { onChange, onBlur, value } }) => (
@@ -96,21 +127,12 @@ const PatientForm = () => {
                 name="breed"
                 rules={{ required: true }}
             />
-            <Controller
-                control={control}
-                render={({ field: { onChange, onBlur, value } }) => (
-                    <Input
-                        placeholder="gender"
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        value={value}
-                        id="gender"
-                    />
-                )}
-                name="gender"
-                rules={{ required: true }}
+
+            <Button
+                title="Submit"
+                onPress={handleSubmit(onSubmit)}
             />
-            <Button title="Submit" />
+
         </View>
     )
 }
