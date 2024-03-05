@@ -16,18 +16,23 @@ const PetSchema = new mongoose.Schema({
         required: [true, "Breed is required"],
         minlength: [3, "Breed must be at least 3 characters long"]
     },
-    skill1: {
-        type: String,
-        default: ""
+    ageYear: {
+        type: Number,
+        required: [true, "Age is required"],
+        min: [0, "Age must be at least 0"]
+
     },
-    skill2: {
-        type: String,
-        default: ""
+    ageMonth: {
+        type: Number,
+        required: [true, "Age is required"],
+        min: [0, "Month must be at least 0"],
+        max: [11, "Month must be less than 12"]
     },
-    skill3: {
+    sex: {
         type: String,
-        default: ""
-    }
+        required: [true, "Sex is required"],
+        enum: ["Male", "Female", "Neutered", "Spayed", "Unknown"]
+    },
 }, { timestamps: true });
 
 module.exports.Pet = mongoose.model('Pet', PetSchema);
