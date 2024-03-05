@@ -65,11 +65,11 @@ module.exports = (app) => {
      *           schema:
      *             type: object
      *             properties:
-     *               username:
+     *               email:
      *                 type: string
      *               password:
      *                 type: string
-     *               email:
+     *               confirmPassword:
      *                 type: string
      *     responses:
      *       '200':
@@ -96,4 +96,22 @@ module.exports = (app) => {
      *         description: User not found
      */
     app.get('/api/users/loggedin', authenticate, UserController.getLoggedInUser);
+
+    /**
+     * @swagger
+     * /api/users:
+     *   get:
+     *     tags:
+     *       - Users
+     *     summary: Get all users
+     *     description: Get all users
+     *     responses:
+     *       200:
+     *         description: All users
+     *       400:
+     *         description: No users found
+     *       500:
+     *         description: Server error
+     */
+    app.get('/api/users', UserController.getAll);
 }

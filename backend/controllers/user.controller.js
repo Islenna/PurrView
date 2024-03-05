@@ -86,6 +86,6 @@ module.exports = {
         res.clearCookie('usertoken');
         res.sendStatus(200);
     }
-
-
 };
+
+

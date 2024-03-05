@@ -50,7 +50,7 @@ module.exports = (app) => {
      *                 description: The pet's sex
      *                 enum: ["Male", "Female", "Neutered", "Spayed", "Unknown"]
      *                 example: "Spayed"
-     *               user:
+     *               owner:
      *                 type: string
      *                 description: The ID of the pet's owner
      *                 example: 5f0f2b3a0b8b3a1a6c7e2d33
@@ -144,23 +144,30 @@ module.exports = (app) => {
     app.delete("/api/pets/:id", authenticate, PetController.delete);
 
     /**
-     *
      * @swagger
      * /api/pets/owner/{id}:
      *  get:
-     *   tags:
-     *   - Pets
-     *  summary: Get pets by owner
-     * description: Retrieve all pets from the system that belong to a specific owner
-     * responses:
-     *   '200':
-     *    description: A list of pets
-     * '400':
-     *   description: Bad request, ID is invalid
-     * '404':
-     *   description: Owner not found
-     *
+     *    tags:
+     *      - Pets
+     *    summary: Get pets by owner
+     *    description: Retrieve all pets from the system that belong to a specific owner
+     *    parameters:
+     *      - in: path
+     *        name: id
+     *        required: true
+     *        description: The ID of the owner
+     *        schema:
+     *          type: string
+     *          example: 5f0f2b3a0b8b3a1a6c7e2d33
+     *    responses:
+     *      '200':
+     *        description: A list of pets
+     *      '400':
+     *        description: Bad request, ID is invalid
+     *      '404':
+     *        description: Owner not found
      */
+    app.get("/api/pets/owner/:id", authenticate, PetController.getByOwner);
 
     app.get("/api/pets/owner/:id", authenticate, PetController.getByOwner);
 };
