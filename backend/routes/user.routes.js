@@ -22,7 +22,7 @@ module.exports = (app) => {
  *           schema:
  *             type: object
  *             properties:
- *               username:
+ *               email:
  *                 type: string
  *               password:
  *                 type: string
@@ -30,7 +30,7 @@ module.exports = (app) => {
  *       200:
  *         description: User logged in successfully
  *       400:
- *         description: Invalid username or password
+ *         description: Invalid email or password
  */
     app.post('/api/users/login', UserController.login);
 

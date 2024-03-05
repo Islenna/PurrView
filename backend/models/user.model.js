@@ -41,6 +41,13 @@ UserSchema.pre('save', function(next) {
         });
 });
 
+UserSchema.pre('save', function(next) {
+    if (this.email) {
+        this.email = this.email.toLowerCase();
+    }
+    next();
+});
+
 module.exports = mongoose.model('User', UserSchema);
 
 

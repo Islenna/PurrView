@@ -19,7 +19,7 @@ const options = {
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'Your API title',
+            title: 'PurrView API',
             version: '1.0.0',
         },
     },

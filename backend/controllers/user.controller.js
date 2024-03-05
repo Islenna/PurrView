@@ -16,6 +16,7 @@ module.exports = {
                         httpOnly: true
                     })
                     .json({ msg: "success!", user: user });
+                    console.log('User registered successfully:', user);
             })
             .catch(err => res.json(err));
     },
@@ -23,7 +24,7 @@ module.exports = {
     login: async (req, res) => {
         try {
             console.log('Received login request with email:', req.body.email);
-            const user = await User.findOne({ email: req.body.email });
+            const user = await User.findOne({ email: req.body.email.toLowerCase() });
     
             if (user === null) {
                 console.log('User not found.');
@@ -47,10 +48,11 @@ module.exports = {
                 res.json({
                     msg: "success!",
                     user: {
-                        email: user.email,
+                        email: user.email.toLowerCase,
                         },
                     token: userToken
                 });
+                console.log('User logged in successfully:', user.email);
         } catch (err) {
             console.error('Error during login:', err);
             res.status(500).json({ error: 'Server error' });
