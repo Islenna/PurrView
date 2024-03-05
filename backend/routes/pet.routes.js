@@ -1,22 +1,21 @@
-const { authenticate } = require('../config/jwt.config');
-const PetController = require('../controllers/pet.controller');
+const { authenticate } = require("../config/jwt.config");
+const PetController = require("../controllers/pet.controller");
 
 module.exports = (app) => {
-    // Pet routes
     /**
      * @swagger
      * tags:
-     *   name: Pets
-     *   description: Pet management
+     *   - name: Pets
+     *     description: Pet management
+     *
      * /api/pets/new:
      *   post:
-     *     description: Create a new pet
-     *     responses:
-     *       200:
-     *         description: Success
-     *       400:
-     *         description: Error
+     *     tags:
+     *       - Pets
+     *     summary: Add a new pet
+     *     description: Add a new pet to the system
      *     requestBody:
+     *       required: true
      *       content:
      *         application/json:
      *           schema:
@@ -24,115 +23,182 @@ module.exports = (app) => {
      *             properties:
      *               name:
      *                 type: string
+     *                 description: The pet's name
+     *                 example: "Rex"
      *               species:
      *                 type: string
+     *                 description: The pet's species
+     *                 enum: ["Dog", "Cat"]
+     *                 example: "Dog"
      *               breed:
      *                 type: string
+     *                 description: The pet's breed
+     *                 example: "Beagle"
      *               ageYear:
      *                 type: number
+     *                 description: The pet's age in years
+     *                 example: 4
+     *                 minimum: 0
      *               ageMonth:
      *                 type: number
-     */
-
-    app.post('/api/pets/new', authenticate, PetController.create);
-    /**
-     * @swagger
-     * tags:
-     *   name: Pets
-     *   description: Pet management
-     * /api/pets:
-     *   get:
-     *     description: Returns all pets
+     *                 description: The pet's age in months
+     *                 example: 6
+     *                 minimum: 0
+     *                 maximum: 11
+     *               sex:
+     *                 type: string
+     *                 description: The pet's sex
+     *                 enum: ["Male", "Female", "Neutered", "Spayed", "Unknown"]
+     *                 example: "Spayed"
+     *               user:
+     *                 type: string
+     *                 description: The ID of the pet's owner
+     *                 example: 5f0f2b3a0b8b3a1a6c7e2d33
      *     responses:
-     *       200:
-     *         description: Success
-     *       400:
-     *         description: Error
+     *       '200':
+     *         description: Pet added successfully
+     *       '400':
+     *         description: Bad request, validation failed
      */
-    app.get('/api/pets', authenticate, PetController.getAll);
+    app.post("/api/pets/new", authenticate, PetController.create);
+
     /**
      * @swagger
-     * tags:
-     *   name: Pets
-     *  description: Pet management
+     * /api/pets:
+     *  get:
+     *    tags:
+     *      - Pets
+     *    summary: Get all pets
+     *    description: Retrieve all pets from the system
+     *    responses:
+     *      '200':
+     *        description: A list of pets
+     *        content:
+     *          application/json:
+     *            schema:
+     *              type: array
+     *              items:
+     *                $ref: '#/components/schemas/Pet'
+     */
+    app.get("/api/pets", authenticate, PetController.getAll);
+    /**
+     * @swagger
      * /api/pets/{id}:
      *   get:
-     *     description: Returns one pet
-     *     parameters:
-     *       - in: path
-     *         name: id
-     *         required: true
-     *         schema:
-     *           type: string
+     *     tags:
+     *       - Pets
+     *     summary: Get a single pet
+     *     description: Retrieve a single pet from the system's database
      *     responses:
-     *       200:
-     *         description: Success
-     *       400:
-     *         description: Error
+     *       '200':
+     *         description: A single pet
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: '#/components/schemas/Pet'
+     *       '400':
+     *         description: Bad request, ID is invalid
+     *       '404':
+     *         description: Pet not found
      */
-    app.get('/api/pets/:id', authenticate, PetController.getOne);
+    app.get("/api/pets/:id", authenticate, PetController.getOne);
     /**
      * @swagger
-     * tags:
-     *   name: Pets
-     *   description: Pet management
      * /api/pets/{id}:
      *   put:
-     *     description: Update one pet
-     *     parameters:
-     *       - in: path
-     *         name: id
-     *         required: true
-     *         schema:
-     *           type: string
+     *     tags:
+     *       - Pets
+     *     summary: Update a pet
+     *     description: Update a pet in the system's database
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             $ref: '#/components/schemas/Pet'
      *     responses:
-     *       200:
-     *         description: Success
-     *       400:
-     *         description: Error
+     *       '200':
+     *         description: Pet updated successfully
+     *       '400':
+     *         description: Bad request, validation failed
+     *       '404':
+     *         description: Pet not found
      */
-    app.put('/api/pets/:id', authenticate, PetController.update);
+    app.put("/api/pets/:id", authenticate, PetController.update);
     /**
      * @swagger
-     * tags:
-     *   name: Pets
-     *   description: Pet management
      * /api/pets/{id}:
      *   delete:
-     *     description: Delete one pet
-     *     parameters:
-     *       - in: path
-     *         name: id
-     *         required: true
-     *         schema:
-     *           type: string
+     *     tags:
+     *       - Pets
+     *     summary: Delete a pet
+     *     description: Delete a pet from the system's database
      *     responses:
-     *       200:
-     *         description: Success
-     *       400:
-     *         description: Error
+     *       '200':
+     *          description: Pet deleted successfully
+     *       '400':
+     *         description: Bad request, ID is invalid
+     *       '404':
+     *         description: Pet not found
      */
-    app.delete('/api/pets/:id', authenticate, PetController.delete);
+    app.delete("/api/pets/:id", authenticate, PetController.delete);
 
     /**
+     *
      * @swagger
-     * tags:
-     *   name: Pets
-     *   description: Pet management
      * /api/pets/owner/{id}:
-     *   get:
-     *     description: Returns all pets by owner
-     *     parameters:
-     *       - in: path
-     *         name: id
-     *         required: true
-     *         schema:
-     *           type: string
-     *     responses:
-     *       200:
-     *         description: Success
-     *       400:
-     *         description: Error
+     *  get:
+     *   tags:
+     *   - Pets
+     *  summary: Get pets by owner
+     * description: Retrieve all pets from the system that belong to a specific owner
+     * responses:
+     *   '200':
+     *    description: A list of pets
+     * '400':
+     *   description: Bad request, ID is invalid
+     * '404':
+     *   description: Owner not found
+     *
      */
-    app.get('/api/pets/owner/:id', authenticate, PetController.getByOwner);
-}
+
+    app.get("/api/pets/owner/:id", authenticate, PetController.getByOwner);
+};
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Pet:
+ *       type: object
+ *       properties:
+ *         _id:
+ *           type: string
+ *           format: uuid
+ *           description: The unique identifier for the pet
+ *         name:
+ *           type: string
+ *           description: Name of the pet
+ *         species:
+ *           type: string
+ *           description: Species of the pet
+ *         breed:
+ *           type: string
+ *           description: Breed of the pet
+ *         ageYear:
+ *           type: integer
+ *           description: Age of the pet in years
+ *         ageMonth:
+ *           type: integer
+ *           description: Age of the pet in months
+ *         sex:
+ *           type: string
+ *           description: Sex of the pet
+ *       required:
+ *         - name
+ *         - species
+ *         - breed
+ *         - ageYear
+ *         - ageMonth
+ *         - sex
+ */

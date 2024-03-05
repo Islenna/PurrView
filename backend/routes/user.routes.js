@@ -1,80 +1,99 @@
-const {authenticate} = require('../config/jwt.config');
+const { authenticate } = require('../config/jwt.config');
 const UserController = require('../controllers/user.controller');
 
-module.exports = (app) => {
-    // User routes
 
+module.exports = (app) => {
     /**
  * @swagger
  * tags:
- *   name: Users
- *   description: User management
+ *   - name: Users
+ *     description: User management
+ * 
  * /api/users/login:
  *   post:
- *     description: Log in a user
- *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Error
+ *     tags:
+ *       - Users
+ *     summary: User login
+ *     description: Login a user
  *     requestBody:
+ *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
  *             properties:
- *               email:
+ *               username:
  *                 type: string
  *               password:
  *                 type: string
+ *     responses:
+ *       200:
+ *         description: User logged in successfully
+ *       400:
+ *         description: Invalid username or password
  */
     app.post('/api/users/login', UserController.login);
 
-/**
- * @swagger
- * tags: 
- *   name: Users
- *   description: User management
- * /api/users/logout:
- *   post:
- *     description: Log out a user
- *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Error
- */
-
+    /**
+     * @swagger
+     * /api/users/logout:
+     *  post:
+     *    tags:
+     *      - Users
+     *    summary: User logout
+     *    description: Logout a user
+     *    responses:
+     *      200:
+     *        description: User logged out successfully
+     *      400:
+     *        description: User not logged in
+     */
     app.post('/api/users/logout', UserController.logout);
-/**
- * @swagger
- * tags:
- *   name: Users
- *   description: User management
- * /api/users/register:
- *   post:
- *     description: Register a new user
- *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Error
- */
+
+    /**
+     * @swagger
+     * /api/users/register:
+     *   post:
+     *     tags:
+     *       - Users
+     *     summary: Register a new user
+     *     description: Register a new user
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               username:
+     *                 type: string
+     *               password:
+     *                 type: string
+     *               email:
+     *                 type: string
+     *     responses:
+     *       '200':
+     *         description: User registered successfully
+     *       '400':
+     *         description: Username or email already in use
+     *       '500':
+     *         description: Server error
+     */
     app.post('/api/users/register', UserController.register);
 
-/**
- * @swagger
- * tags:
- *   name: Users
- *   description: User management
- * /api/users/loggedin:
- *   get:
- *     description: Get the logged in user
- *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Error
- */
+    /**
+     * @swagger
+     * /api/users/loggedin:
+     *   get:
+     *     tags:
+     *       - Users
+     *     summary: Get logged in user
+     *     description: Get the currently logged in user
+     *     responses:
+     *       200:
+     *         description: User found
+     *       400:
+     *         description: User not found
+     */
     app.get('/api/users/loggedin', authenticate, UserController.getLoggedInUser);
 }
