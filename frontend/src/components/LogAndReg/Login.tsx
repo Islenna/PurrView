@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Button, Text } from "react-native";
 import { Input } from "react-native-elements";
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../../App';
 import { useForm, Controller } from 'react-hook-form';
@@ -17,7 +18,14 @@ const Login = () => {
   const onSubmit = async (data: Record<string, any>) => {
     try {
       const response = await axios.post('http://localhost:8000/api/users/login', data);
-      navigation.navigate('Main');
+      if (response.status === 200) {
+        const { token } = response.data;
+        await AsyncStorage.setItem('userToken', token);
+        console.log('User token:', token);
+        navigation.navigate('Main');
+      } else {
+        setError('An unexpected error occurred');
+      }
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const message = err.response?.data?.message ?? 'An unexpected error occurred';

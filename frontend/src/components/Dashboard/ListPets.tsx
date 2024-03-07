@@ -2,40 +2,51 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 import { RootStackParamList } from '../../../App'; // Adjust the path as necessary
 
 type ListPetsNavigationProp = StackNavigationProp<RootStackParamList, 'PatientInfo'>;
 
-//Change once the database is functional.
 type Pet = {
     id: string;
     name: string;
 };
 
-const dummyPets: Pet[] = [
-    { id: '1', name: 'Rex' },
-    { id: '2', name: 'Fido' },
-];
-
 const ListPets = () => {
-    const [pets, setPets] = useState<Pet[]>(dummyPets);
+    const [pets, setPets] = useState<Pet[]>([]);
     const navigation = useNavigation<ListPetsNavigationProp>();
-    
+
     useEffect(() => {
-        // Here you would fetch the pets belonging to the user
-        // This example uses dummy data
-        setPets(dummyPets);
+        const fetchPets = async () => {
+            try {
+                const { userToken, id } = await getUserInfo();
+
+                const response = await axios.get(`http://localhost:8000/api/pets/owner/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${userToken}`
+                    }
+                });
+
+                // Update state with the fetched pets
+                setPets(response.data);
+            } catch (error) {
+                console.error('Error fetching pets:', error);
+            }
+        };
+
+        // Call the fetchPets function when the component mounts
+        fetchPets();
     }, []);
 
-    //This function is non-functional right now. It is supposed to navigate to the PatientInfo screen, passing the selected pet as a parameter.
+    const getUserInfo = async () => {
+        const userToken = await AsyncStorage.getItem('userToken');
+        const id = await AsyncStorage.getItem('userId');
+        return { userToken, id };
+    };
 
-    // const handleSelectPet = (pet: Pet) => { 
-    //     // Navigate to the PatientInfo screen, passing the selected pet as a parameter
-    //     navigation.navigate('PatientInfo', { pet });
-    // };
-
-    const handlePetClick = () => {
-        navigation.navigate('PatientInfo');
+    const handlePetClick = (pet: Pet) => {
+        navigation.navigate('PatientInfo', { petId: pet.id });
     };
 
     return (
@@ -45,7 +56,7 @@ const ListPets = () => {
                     data={pets}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => handlePetClick}>
+                        <TouchableOpacity onPress={() => handlePetClick(item)}>
                             <Text>{item.name}</Text>
                         </TouchableOpacity>
                     )}

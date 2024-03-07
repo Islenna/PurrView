@@ -2,6 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { AuthProvider } from './src/context/AuthContext';
 import Login from './src/components/LogAndReg/Login';
 import Registration from './src/components/LogAndReg/Registration';
 import PatientInfo from './src/components/Patient/PatientInfo';
@@ -17,7 +18,7 @@ export type RootStackParamList = { //This is an interface for the navigation sta
   Login: undefined;
   Registration: undefined;
   PatientForm: undefined;
-  PatientInfo: undefined;
+  PatientInfo: {petId: string};
   Main: undefined;
   DashboardTabs: undefined;
 };
@@ -31,15 +32,17 @@ export type MainTabParamList = {
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Registration" component={Registration} />
-        <Stack.Screen name="Main" component={Dashboard} />
-        <Stack.Screen name="PatientForm" component={PatientForm} />
-        <Stack.Screen name="DashboardTabs" component={MainTabNavigator} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AuthProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Login">
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Registration" component={Registration} />
+          <Stack.Screen name="Main" component={Dashboard} />
+          <Stack.Screen name="PatientForm" component={PatientForm} />
+          <Stack.Screen name="DashboardTabs" component={MainTabNavigator} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AuthProvider>
   );
 };
 

@@ -1,10 +1,25 @@
 const Pet = require('../models/pet.model');
+const User = require('../models/user.model');
 
 module.exports = {
-    create: (req, res) => {
-        Pet.create(req.body)
-            .then(pet => res.json(pet))
-            .catch(err => res.status(400).json(err));
+    create: async (req, res) => {
+        try {
+            // Access owner's ID from decoded JWT token
+            const ownerId = req.user.id;
+
+            // Add owner's ID to the request body
+            req.body.owner = ownerId;
+
+            // Create the pet
+            const pet = await Pet.create(req.body);
+
+            // Update the owner's record to include the pet
+            await User.findByIdAndUpdate(ownerId, { $push: { pets: pet._id } });
+
+            res.json(pet);
+        } catch (err) {
+            res.status(400).json(err);
+        }
     },
     getAll: (req, res) => {
         Pet.find()

@@ -2,6 +2,7 @@ import { View, Button, Text } from "react-native";
 import { Input } from "react-native-elements";
 import React from "react";
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../../App'
 import { useForm, Controller } from 'react-hook-form';
@@ -15,10 +16,11 @@ const Registration = () => {
   const { control, handleSubmit, formState: { errors }, register, getValues } = useForm();
 
   const onSubmit = async (data: Record<string, any>) => {
-    console.log(data);
-    console.log('submitting');
     try {
       const response = await axios.post('http://localhost:8000/api/users/register', data);
+      const { token } = response.data;
+      await AsyncStorage.setItem('userToken', token);
+      console.log('User token:', token);
       navigation.navigate('Main');
     } catch (err) {
       if (axios.isAxiosError(err)) {

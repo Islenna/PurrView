@@ -3,6 +3,7 @@ import { View, Button, Text } from 'react-native'
 import { Input } from 'react-native-elements'
 import { useForm, Controller } from 'react-hook-form';
 import { Picker } from '@react-native-picker/picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 
@@ -11,8 +12,19 @@ const PatientForm = () => {
 
     const onSubmit = async (data: Record<string, any>) => {
         try {
-            const response = await axios.post('http://localhost:8000/api/pets/new', data);
-        } catch (err) {
+            // Retrieve user token from AsyncStorage
+            const userToken = await AsyncStorage.getItem('userToken');
+
+            // Set Authorization header with the retrieved token
+            const response = await axios.post('http://localhost:8000/api/pets/new', data, {
+                headers: {
+                    Authorization: `Bearer ${userToken}` // Use the userToken variable
+                }
+            });
+            console.log("Created new pet:", response.data);
+        }
+        
+        catch (err) {
             if (axios.isAxiosError(err)) {
                 const message = err.response?.data?.message ?? 'An unexpected error occurred';
                 console.log(message);
@@ -62,7 +74,7 @@ const PatientForm = () => {
                 name="species"
                 rules={{ required: true }}
             />
-            <Text>Gender</Text>
+            <Text>Sex</Text>
             <Controller
                 control={control}
                 render={({ field: { onChange, onBlur, value } }) => (
@@ -70,7 +82,7 @@ const PatientForm = () => {
                         selectedValue={value}
                         onValueChange={onChange}
                         onBlur={onBlur}
-                        id="gender"
+                        id="sex"
                     >
                         {genderOptions.map((gender) => (
                             <Picker.Item label={gender} value={gender} key={gender}
@@ -78,7 +90,7 @@ const PatientForm = () => {
                         ))}
                     </Picker>
                 )}
-                name="gender"
+                name="sex"
                 rules={{ required: true }}
             />
             <Text>Age in Years</Text>
