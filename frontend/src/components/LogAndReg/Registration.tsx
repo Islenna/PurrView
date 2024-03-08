@@ -20,7 +20,9 @@ const Registration = () => {
       const response = await axios.post('http://localhost:8000/api/users/register', data);
       const { token } = response.data;
       await AsyncStorage.setItem('userToken', token);
+      
       console.log('User token:', token);
+      console.log("Did you remember to change the backend?")
       navigation.navigate('Main');
     } catch (err) {
       if (axios.isAxiosError(err)) {

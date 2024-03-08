@@ -19,9 +19,9 @@ const Login = () => {
     try {
       const response = await axios.post('http://localhost:8000/api/users/login', data);
       if (response.status === 200) {
-        const { token } = response.data;
+        const { token, id } = response.data; 
         await AsyncStorage.setItem('userToken', token);
-        console.log('User token:', token);
+        await AsyncStorage.setItem('userId', id);
         navigation.navigate('Main');
       } else {
         setError('An unexpected error occurred');
@@ -35,7 +35,8 @@ const Login = () => {
       }
     }
   };
-  
+
+
   return (
     <View>
       <Text>Login</Text>
@@ -77,7 +78,7 @@ const Login = () => {
       <Text>{error}</Text>
     </View>
   );
-  
+
 };
 
 export default Login;

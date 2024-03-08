@@ -168,44 +168,4 @@ module.exports = (app) => {
      *        description: Owner not found
      */
     app.get("/api/pets/owner/:id", authenticate, PetController.getByOwner);
-
-    app.get("/api/pets/owner/:id", authenticate, PetController.getByOwner);
-};
-
-/**
- * @swagger
- * components:
- *   schemas:
- *     Pet:
- *       type: object
- *       properties:
- *         _id:
- *           type: string
- *           format: uuid
- *           description: The unique identifier for the pet
- *         name:
- *           type: string
- *           description: Name of the pet
- *         species:
- *           type: string
- *           description: Species of the pet
- *         breed:
- *           type: string
- *           description: Breed of the pet
- *         ageYear:
- *           type: integer
- *           description: Age of the pet in years
- *         ageMonth:
- *           type: integer
- *           description: Age of the pet in months
- *         sex:
- *           type: string
- *           description: Sex of the pet
- *       required:
- *         - name
- *         - species
- *         - breed
- *         - ageYear
- *         - ageMonth
- *         - sex
- */
+}

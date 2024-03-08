@@ -15,8 +15,11 @@ module.exports = {
                     .cookie("usertoken", userToken, {
                         httpOnly: true
                     })
-                    .json({ msg: "success!", user: user });
-                    console.log('User registered successfully:', user);
+                    res.json({
+                        msg: "success!",
+                        id: user._id,
+                        token: userToken
+                    });
             })
             .catch(err => res.json(err));
     },
@@ -41,24 +44,24 @@ module.exports = {
             const userToken = jwt.sign({
                 id: user._id,
             }, process.env.JWT_SECRET);
-            res
-                .cookie("usertoken", userToken, {
-                    httpOnly: true
-                })
-                res.json({
-                    msg: "success!",
-                    user: {
-                        email: user.email.toLowerCase,
-                        },
-                    token: userToken
-                });
-                console.log('User logged in successfully:', user.email);
-                console.log('User token:', userToken)
+    
+            res.cookie("usertoken", userToken, {
+                httpOnly: true
+            });
+    
+            res.json({
+                msg: "success!",
+                id: user._id,
+                token: userToken
+            });
+            console.log('Successfully logged in user:', user._id);
+            console.log('Sent user token:', userToken);
         } catch (err) {
             console.error('Error during login:', err);
             res.status(500).json({ error: 'Server error' });
         }
     },
+    
 
     getLoggedInUser: (req, res) => {
         User.findById(req.user.id)

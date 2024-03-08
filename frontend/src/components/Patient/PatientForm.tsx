@@ -5,10 +5,15 @@ import { useForm, Controller } from 'react-hook-form';
 import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../../../App';
+import { useNavigation } from '@react-navigation/native';
 
+type PetFormScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
 const PatientForm = () => {
     const { control, handleSubmit, formState: { errors } } = useForm();
+    const navigation = useNavigation<PetFormScreenNavigationProp>();
 
     const onSubmit = async (data: Record<string, any>) => {
         try {
@@ -22,6 +27,7 @@ const PatientForm = () => {
                 }
             });
             console.log("Created new pet:", response.data);
+            navigation.navigate('Main');
         }
         
         catch (err) {

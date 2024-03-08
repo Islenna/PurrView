@@ -21,20 +21,17 @@ const ListPets = () => {
         const fetchPets = async () => {
             try {
                 const { userToken, id } = await getUserInfo();
-
                 const response = await axios.get(`http://localhost:8000/api/pets/owner/${id}`, {
                     headers: {
                         Authorization: `Bearer ${userToken}`
                     }
                 });
-
                 // Update state with the fetched pets
                 setPets(response.data);
             } catch (error) {
                 console.error('Error fetching pets:', error);
             }
         };
-
         // Call the fetchPets function when the component mounts
         fetchPets();
     }, []);

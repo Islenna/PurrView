@@ -15,7 +15,7 @@ module.exports = {
 
             // Update the owner's record to include the pet
             await User.findByIdAndUpdate(ownerId, { $push: { pets: pet._id } });
-
+            console.log('Successfully added pet to owner:', ownerId);
             res.json(pet);
         } catch (err) {
             res.status(400).json(err);
