@@ -13,6 +13,7 @@
 - [] Validations / Security
 - [X] Cartoon Dog and Cat Image
 - [] Animations for the image? 
+- [] AuthContext & Registration
 - 
 ## Machine Learning
 - [] Train the AI
