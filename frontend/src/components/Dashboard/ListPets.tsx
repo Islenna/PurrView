@@ -9,7 +9,7 @@ import { RootStackParamList } from '../../../App'; // Adjust the path as necessa
 type ListPetsNavigationProp = StackNavigationProp<RootStackParamList, 'PatientInfo'>;
 
 type Pet = {
-    id: string;
+    _id: string;
     name: string;
 };
 
@@ -43,15 +43,14 @@ const ListPets = () => {
     };
 
     const handlePetClick = (pet: Pet) => {
-        navigation.navigate('PatientInfo', { petId: pet.id });
-    };
-
+        navigation.navigate('PatientInfo', { petId: pet._id });
+    }
     return (
         <View>
             {pets.length > 0 ? (
                 <FlatList
                     data={pets}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => item._id}
                     renderItem={({ item }) => (
                         <TouchableOpacity onPress={() => handlePetClick(item)}>
                             <Text>{item.name}</Text>
