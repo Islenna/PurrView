@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Button, Text } from "react-native";
 import { Input } from "react-native-elements";
 import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from '../../context/AuthContext';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../../App';
 import { useForm, Controller } from 'react-hook-form';
@@ -11,6 +11,7 @@ import axios from 'axios';
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
 const Login = () => {
+  const { login } = useAuth();
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const { control, handleSubmit, formState: { errors } } = useForm();
   const [error, setError] = useState('');
@@ -20,11 +21,8 @@ const Login = () => {
       const response = await axios.post('http://localhost:8000/api/users/login', data);
       if (response.status === 200) {
         const { token, id } = response.data; 
-        await AsyncStorage.setItem('userToken', token);
-        await AsyncStorage.setItem('userId', id);
+        login(token);  // Update the token in the context
         navigation.navigate('Main');
-      } else {
-        setError('An unexpected error occurred');
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
