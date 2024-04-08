@@ -1,47 +1,116 @@
-import { View, Text } from "react-native";
-import React from "react";
+import React, { useState } from 'react';
+import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Pet } from '../Shared/Pet';
+import { Camera } from 'expo-camera';
 
-const ImageCapture = () => {
+// Importing the images
+import DogImage from '../../assets/Dog.jpg';
+import CatImage from '../../assets/Cat.jpg';
+
+type Props = {
+    route: {
+        params: {
+            pet: Pet;
+        };
+    };
+};
+
+const ImageCapture: React.FC<Props> = ({ route }) => {
+    const { pet } = route.params;
+    const [selectedEye, setSelectedEye] = useState<string | null>(null);
+
+    const getPetImage = () => {
+        switch (pet.species) {
+            case 'Dog':
+                return DogImage;
+            case 'Cat':
+                return CatImage;
+            default:
+                return null; // Default case if for some reason the species is not Dog or Cat
+        }
+    };
+
+    const topForSpecies = pet.species === 'Dog' ? '25%' : '45%';
+
+    const leftEyeStyle = {
+        ...styles.eyeOverlay,
+        ...styles.leftEye,
+        top: topForSpecies, // Apply the dynamic top value
+    };
+
+    const rightEyeStyle = {
+        ...styles.eyeOverlay,
+        ...styles.rightEye,
+        top: topForSpecies, // Apply the dynamic top value
+    };
+
+    const selectEye = (eye: 'left' | 'right') => {
+        setSelectedEye(eye); // 'left' or 'right'
+    };
+
     return (
-        <View>
-            <Text>ImageCapture</Text>
+        <View style={styles.container}>
+            <Text style={styles.headerText}>{`Prepare to capture an image of your ${pet.species}`}</Text>
+            <View style={styles.imageContainer}>
+                <Image source={getPetImage()} style={styles.petImage} />
+                {/* Apply the dynamic style based on the species */}
+                <TouchableOpacity
+                    style={[
+                        styles.eyeOverlay,
+                        styles.leftEye,
+                        { top: pet.species === 'Dog' ? '30%' : '45%' } // Directly applying the dynamic style
+                    ]}
+                    onPress={() => selectEye('left')}
+                />
+                <TouchableOpacity
+                    style={[
+                        styles.eyeOverlay,
+                        styles.rightEye,
+                        { top: pet.species === 'Dog' ? '30%' : '45%' } // Directly applying the dynamic style
+                    ]}
+                    onPress={() => selectEye('right')}
+                />
+
+            </View>
+            {selectedEye && <Text style={styles.selectionText}>You selected the {selectedEye} eye.</Text>}
         </View>
     );
 };
 
-// import React, { useState } from 'react';
-// import { View, Image, TouchableOpacity } from 'react-native';
-// import { useNavigation } from '@react-navigation/native';
-
-// const ImageCapture = ({ species }) => {
-//   const navigation = useNavigation();
-//   const [selectedEye, setSelectedEye] = useState(null);
-
-//   const handleEyeSelect = (eye) => {
-//     setSelectedEye(eye);
-//     // Navigate to the camera or do other actions
-//   };
-
-//   return (
-//     <View>
-//       <Image
-//         source={species === 'dog' ? require('./dog.png') : require('./cat.png')}
-//         style={{ width: '100%', height: 300 }}
-//       />
-//       {/* Overlay touchable areas on the eyes */}
-//       <TouchableOpacity
-//         style={{ position: 'absolute', top: eyePosition.top, left: eyePosition.left, width: eyeSize, height: eyeSize }}
-//         onPress={() => handleEyeSelect('left')}
-//       />
-//       <TouchableOpacity
-//         style={{ position: 'absolute', top: eyePosition.top, right: eyePosition.right, width: eyeSize, height: eyeSize }}
-//         onPress={() => handleEyeSelect('right')}
-//       />
-//       {/* Include your animations here */}
-//     </View>
-//   );
-// };
-
-// export default ImageCapture;
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    headerText: {
+        marginBottom: 20,
+        fontSize: 18,
+    },
+    imageContainer: {
+        position: 'relative',
+    },
+    petImage: {
+        width: 500, // Adjust as needed for layout
+        height: 500, // Adjust as needed to maintain aspect ratio
+        resizeMode: 'contain',
+    },
+    eyeOverlay: {
+        position: 'absolute',
+        width: 50, // Size of the touchable area
+        height: 50, // Size of the touchable area
+        backgroundColor: 'rgba(255,255,255,0.2)', // Semi-transparent to visualize the touchable area; set to 'transparent' in production
+    },
+    leftEye: {
+        left: '30%',
+    },
+    rightEye: {
+        right: '30%',
+    },
+    selectionText: {
+        marginTop: 20,
+        fontSize: 16,
+    },
+});
 
 export default ImageCapture;

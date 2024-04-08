@@ -5,13 +5,11 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { RootStackParamList } from '../../../App'; // Adjust the path as necessary
+import { Pet } from '../Shared/Pet';
 
 type ListPetsNavigationProp = StackNavigationProp<RootStackParamList, 'PatientInfo'>;
 
-type Pet = {
-    _id: string;
-    name: string;
-};
+
 
 const ListPets = () => {
     const [pets, setPets] = useState<Pet[]>([]);

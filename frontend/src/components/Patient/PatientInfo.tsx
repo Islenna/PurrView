@@ -5,11 +5,14 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { Pet } from '../Shared/Pet';
 
 type RootStackParamList = {
     PatientInfo: { petId: string }; // Define the params for the PatientInfo screen
+    ImageCapture: { pet: Pet | null }; // Define the params for the ImageCapture screen
     // Add other screens here...
 };
+
 type PatientInfoNavigationProp = StackNavigationProp<RootStackParamList, 'PatientInfo'>;
 
 type PatientInfoRouteProp = RouteProp<RootStackParamList, 'PatientInfo'>;
@@ -18,10 +21,6 @@ type Props = {
     route: PatientInfoRouteProp;
 };
 
-type Pet = {
-    name: string;
-    // Add other pet properties here...
-};
 
 const PatientInfo: React.FC<Props> = ({ route }) => {
     const { petId } = route.params;
@@ -30,6 +29,10 @@ const PatientInfo: React.FC<Props> = ({ route }) => {
     const { token } = useAuth();
     const navigation = useNavigation<PatientInfoNavigationProp>();
     
+    const handleCapture = () => {
+        navigation.navigate('ImageCapture', { pet: pet });
+    };
+
     useEffect(() => {
         const fetchPetInfo = async () => {
             try {
@@ -50,18 +53,16 @@ const PatientInfo: React.FC<Props> = ({ route }) => {
 
     return (
         <View>
-            {/* Display loading if fetching data */}
             {loading ? (
                 <Text>Loading...</Text>
             ) : (
                 <>
-                    {/* Display patient information here */}
                     <Text>Patient Information</Text>
                     <Text>Name: {pet ? pet.name : 'Loading...'}</Text>
                     <Text>Pet ID: {petId}</Text>
                 </>
             )}
-            <Button title="Capture an Image"onPress={() => navigation.navigate('ImageCapture')} />
+            <Button title="Capture an Image" onPress={handleCapture} />
         </View>
     );
 };
