@@ -3,7 +3,7 @@
 ## Backend
 - [x] User CRUD
 - [x] Patient CRUD
-- [ ] User / Patient CRUD testing
+- [] User / Patient CRUD testing
 - [] Validations / Security
 - 
 ## Frontend
@@ -12,13 +12,14 @@
 - [X] Routing
 - [] Validations / Security
 - [X] Cartoon Dog and Cat Image
-- [] Animations for the image? 
+- [X] Eye selectors 
 - [] AuthContext & Registration
 - 
 ## Machine Learning
 - [] Train the AI
 - [] Connect AI to a camera.
 - [] Reprocess captured image
+- [] Implement template matching using OpenCV first.
 
 ### Planning Notes:
 Login (Or Register if not Logged In)

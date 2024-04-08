@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Pet } from '../Shared/Pet';
 import { Camera } from 'expo-camera';
+import { CameraType } from 'expo-camera/build/Camera.types';
 
 // Importing the images
 import DogImage from '../../assets/Dog.jpg';
@@ -18,6 +19,52 @@ type Props = {
 const ImageCapture: React.FC<Props> = ({ route }) => {
     const { pet } = route.params;
     const [selectedEye, setSelectedEye] = useState<string | null>(null);
+    const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+    const [cameraOpen, setCameraOpen] = useState<boolean>(false);
+    const cameraRef = useRef<Camera>(null);
+
+    useEffect(() => {
+        (async () => {
+            const { status } = await Camera.requestCameraPermissionsAsync();
+            setHasPermission(status === 'granted');
+        })();
+    }, []);
+
+    const takePicture = async () => {
+        if (cameraRef.current) {
+            const options = { quality: 0.5, base64: true, flashMode: Camera.Constants.FlashMode };
+            const data = await cameraRef.current.takePictureAsync(options);
+            console.log(data.uri);
+            // Process or save the image as needed
+        }
+    };
+
+
+
+    if (hasPermission === null) {
+        return <View />;
+    }
+    if (hasPermission === false) {
+        return <Text>No access to camera</Text>;
+    }
+
+    const handleOpenCamera = () => {
+        setCameraOpen(true);
+    };
+
+    if (cameraOpen) {
+        return (
+            <View style={{ flex: 1 }}>
+                <Camera style={{ flex: 1 }} ref={cameraRef} type={CameraType.back}>
+                    {/* Button to take a picture */}
+                    <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
+                        <Text style={styles.captureButtonText}>Take Picture</Text>
+                    </TouchableOpacity>
+                </Camera>
+            </View>
+        );
+    }
+
 
     const getPetImage = () => {
         switch (pet.species) {
@@ -31,18 +78,6 @@ const ImageCapture: React.FC<Props> = ({ route }) => {
     };
 
     const topForSpecies = pet.species === 'Dog' ? '25%' : '45%';
-
-    const leftEyeStyle = {
-        ...styles.eyeOverlay,
-        ...styles.leftEye,
-        top: topForSpecies, // Apply the dynamic top value
-    };
-
-    const rightEyeStyle = {
-        ...styles.eyeOverlay,
-        ...styles.rightEye,
-        top: topForSpecies, // Apply the dynamic top value
-    };
 
     const selectEye = (eye: 'left' | 'right') => {
         setSelectedEye(eye); // 'left' or 'right'
@@ -70,9 +105,15 @@ const ImageCapture: React.FC<Props> = ({ route }) => {
                     ]}
                     onPress={() => selectEye('right')}
                 />
-
             </View>
             {selectedEye && <Text style={styles.selectionText}>You selected the {selectedEye} eye.</Text>}
+
+            {/* Button to open the camera */}
+            {selectedEye && (
+                <TouchableOpacity style={styles.cameraButton} onPress={handleOpenCamera}>
+                    <Text style={styles.cameraButtonText}>Open Camera</Text>
+                </TouchableOpacity>
+            )}
         </View>
     );
 };
@@ -111,6 +152,30 @@ const styles = StyleSheet.create({
         marginTop: 20,
         fontSize: 16,
     },
+    cameraButton: {
+        marginTop: 20,
+        backgroundColor: '#007bff', // A nice shade of blue
+        borderRadius: 5,
+        padding: 10,
+    },
+    cameraButtonText: {
+        color: '#ffffff',
+        fontSize: 16,
+        textAlign: 'center',
+    },
+    captureButton: {
+        flex: 0,
+        backgroundColor: '#fff',
+        borderRadius: 5,
+        padding: 15,
+        alignSelf: 'center',
+        margin: 20,
+    },
+    captureButtonText: {
+        fontSize: 14,
+        color: '#000',
+    }
+    
 });
 
 export default ImageCapture;
