@@ -1,4 +1,5 @@
 require('dotenv').config();
+const path = require('path');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
@@ -9,6 +10,7 @@ app.use(cookieParser());
 app.use(cors({ credentials: true, origin: process.env.DB_ORIGIN }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'static')));
 
 require('./config/mongoose.config');
 require('./routes/user.routes')(app);

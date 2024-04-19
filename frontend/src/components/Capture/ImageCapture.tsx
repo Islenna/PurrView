@@ -79,8 +79,8 @@ const ImageCapture: React.FC<Props> = ({ route }) => {
 
     const topForSpecies = pet.species === 'Dog' ? '25%' : '45%';
 
-    const selectEye = (eye: 'left' | 'right') => {
-        setSelectedEye(eye); // 'left' or 'right'
+    const selectEye = (eye: 'right' | 'left') => {
+        setSelectedEye(eye); // 'right' or 'left'
     };
 
     return (
@@ -92,7 +92,7 @@ const ImageCapture: React.FC<Props> = ({ route }) => {
                 <TouchableOpacity
                     style={[
                         styles.eyeOverlay,
-                        styles.leftEye,
+                        styles.rightEye,
                         { top: pet.species === 'Dog' ? '30%' : '45%' } // Directly applying the dynamic style
                     ]}
                     onPress={() => selectEye('left')}
@@ -100,7 +100,7 @@ const ImageCapture: React.FC<Props> = ({ route }) => {
                 <TouchableOpacity
                     style={[
                         styles.eyeOverlay,
-                        styles.rightEye,
+                        styles.leftEye,
                         { top: pet.species === 'Dog' ? '30%' : '45%' } // Directly applying the dynamic style
                     ]}
                     onPress={() => selectEye('right')}
