@@ -17,6 +17,7 @@
 - 
 ## Machine Learning
 - [] Train the AI
+- [] Template Matching while waiting for AI training images.
 - [] Connect AI to a camera.
 - [] Reprocess captured image
 - [] Implement template matching using OpenCV first.
