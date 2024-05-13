@@ -3,12 +3,12 @@ import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Pet } from '../Shared/Pet';
 import { Camera } from 'expo-camera';
 import { CameraType } from 'expo-camera/build/Camera.types';
-import ImageTemplateMatching from '../../assets/ImageTemplateMatching';
+import OpenCVWebView from '../OpenCVWebView';
+import { WebView } from 'react-native-webview';
 
 // Importing the images
 import DogImage from '../../assets/Dog.jpg';
 import CatImage from '../../assets/Cat.jpg';
-
 
 type Props = {
     route: {
@@ -37,8 +37,21 @@ const ImageCapture: React.FC<Props> = ({ route }) => {
         if (cameraRef.current) {
             const options = { quality: 0.5, base64: true, flashMode: Camera.Constants.FlashMode };
             const data = await cameraRef.current.takePictureAsync(options);
-            setCapturedImageUri(data.uri);  // Save the URI of the captured image
+            console.log("Image captured");
+            setCapturedImageUri(data.uri);
             setCameraOpen(false);  // Optionally close the camera
+        }
+    };
+
+    
+    const getPetImage = () => {
+        switch (pet.species) {
+            case 'Dog':
+                return DogImage;
+            case 'Cat':
+                return CatImage;
+            default:
+                return null; // Default case if for some reason the species is not Dog or Cat
         }
     };
 
@@ -58,7 +71,6 @@ const ImageCapture: React.FC<Props> = ({ route }) => {
         return (
             <View style={{ flex: 1 }}>
                 <Camera style={{ flex: 1 }} ref={cameraRef} type={CameraType.back}>
-                    {/* Button to take a picture */}
                     <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
                         <Text style={styles.captureButtonText}>Take Picture</Text>
                     </TouchableOpacity>
@@ -67,36 +79,23 @@ const ImageCapture: React.FC<Props> = ({ route }) => {
         );
     }
 
-    if (capturedImageUri && selectedEye) {
+    // Conditional rendering of OpenCVWebView
+    if (capturedImageUri) {
+        const templateUri = `http://localhost:8000/${pet.species.toLowerCase()}_${selectedEye}_eye.jpg`; // Assuming this is how you generate your template URI
         return (
-            <ImageTemplateMatching 
-                species={pet.species.toLowerCase()} 
-                eye={selectedEye}
+            <OpenCVWebView
                 sourceUri={capturedImageUri}
+                templateUri={templateUri}
             />
         );
     }
-    
-
-    const getPetImage = () => {
-        switch (pet.species) {
-            case 'Dog':
-                return DogImage;
-            case 'Cat':
-                return CatImage;
-            default:
-                return null; // Default case if for some reason the species is not Dog or Cat
-        }
-    };
-
-    const topForSpecies = pet.species === 'Dog' ? '25%' : '45%';
 
     const selectEye = (eye: 'right' | 'left') => {
         setSelectedEye(eye); // 'right' or 'left'
     };
 
+    // Default rendering when not capturing or processing
     return (
-        
         <View style={styles.container}>
             <Text style={styles.headerText}>{`Prepare to capture an image of your ${pet.species}`}</Text>
             <View style={styles.imageContainer}>
@@ -128,6 +127,7 @@ const ImageCapture: React.FC<Props> = ({ route }) => {
                 </TouchableOpacity>
             )}
         </View>
+
     );
 };
 
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#000',
     }
-    
+
 });
 
 export default ImageCapture;

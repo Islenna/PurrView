@@ -1,14 +1,23 @@
 <!-- File: my-opencv-page.html -->
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>OpenCV in WebView</title>
 </head>
+
 <body>
     <h1>OpenCV in WebView</h1>
     <script src="opencv.js"></script>
     <script>
-        // Your OpenCV JavaScript code here
+        cv['onRuntimeInitialized'] = () => {
+            console.log('OpenCV Ready');
+            // Test by creating a simple matrix
+            let mat = new cv.Mat(100, 100, cv.CV_8UC3, new cv.Scalar(255, 0, 0));
+            console.log('Matrix created', mat);
+            mat.delete(); // Clean up
+        };
     </script>
 </body>
+
 </html>
