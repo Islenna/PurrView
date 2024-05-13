@@ -1,11 +1,20 @@
 import React from 'react';
 import OpenCVWebView from './OpenCVWebView';
+type ImageTemplateMatchingProps = {
+    species: string;
+    eye: string;
+    sourceUri: string; // Ensure this is included
+};
 
-const ImageTemplateMatching = () => {
+const ImageTemplateMatching: React.FC<ImageTemplateMatchingProps> = ({ species, eye, sourceUri }) => {
+    const getTemplateUri = () => {
+        return `http://localhost:8000/${species}_${eye}_eye.jpg`;
+    };
+    
     return (
         <OpenCVWebView 
-            sourceUri="http://localhost:8000/source.jpg" 
-            templateUri="http://localhost:8000/template.jpg" 
+            sourceUri={sourceUri} 
+            templateUri={getTemplateUri()} 
         />
     );
 };

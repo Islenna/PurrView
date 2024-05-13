@@ -3,10 +3,12 @@ import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Pet } from '../Shared/Pet';
 import { Camera } from 'expo-camera';
 import { CameraType } from 'expo-camera/build/Camera.types';
+import ImageTemplateMatching from '../../assets/ImageTemplateMatching';
 
 // Importing the images
 import DogImage from '../../assets/Dog.jpg';
 import CatImage from '../../assets/Cat.jpg';
+
 
 type Props = {
     route: {
@@ -21,6 +23,7 @@ const ImageCapture: React.FC<Props> = ({ route }) => {
     const [selectedEye, setSelectedEye] = useState<string | null>(null);
     const [hasPermission, setHasPermission] = useState<boolean | null>(null);
     const [cameraOpen, setCameraOpen] = useState<boolean>(false);
+    const [capturedImageUri, setCapturedImageUri] = useState<string | null>(null);
     const cameraRef = useRef<Camera>(null);
 
     useEffect(() => {
@@ -34,11 +37,10 @@ const ImageCapture: React.FC<Props> = ({ route }) => {
         if (cameraRef.current) {
             const options = { quality: 0.5, base64: true, flashMode: Camera.Constants.FlashMode };
             const data = await cameraRef.current.takePictureAsync(options);
-            console.log(data.uri);
-            // Process or save the image as needed
+            setCapturedImageUri(data.uri);  // Save the URI of the captured image
+            setCameraOpen(false);  // Optionally close the camera
         }
     };
-
 
 
     if (hasPermission === null) {
@@ -65,6 +67,16 @@ const ImageCapture: React.FC<Props> = ({ route }) => {
         );
     }
 
+    if (capturedImageUri && selectedEye) {
+        return (
+            <ImageTemplateMatching 
+                species={pet.species.toLowerCase()} 
+                eye={selectedEye}
+                sourceUri={capturedImageUri}
+            />
+        );
+    }
+    
 
     const getPetImage = () => {
         switch (pet.species) {
@@ -84,6 +96,7 @@ const ImageCapture: React.FC<Props> = ({ route }) => {
     };
 
     return (
+        
         <View style={styles.container}>
             <Text style={styles.headerText}>{`Prepare to capture an image of your ${pet.species}`}</Text>
             <View style={styles.imageContainer}>
