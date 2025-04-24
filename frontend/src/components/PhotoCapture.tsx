@@ -3,10 +3,14 @@ import { Button } from "@/components/ui/button"
 import { PhotoOverlay } from "@/components/PhotoOverlay"
 import { checkBrightness } from "@/utils/checkImageQuality"
 import { toast } from "sonner"
+import { supabase } from "@/lib/supabaseClient"
+
 
 export const PhotoCapture = () => {
     const [preview, setPreview] = useState<string | null>(null)
     const [isPortrait, setIsPortrait] = useState(false)
+    const [uploadStatus, setUploadStatus] = useState<string | null>(null)
+
 
     useEffect(() => {
         const checkOrientation = () => {
@@ -29,6 +33,31 @@ export const PhotoCapture = () => {
             if (!isBrightEnough) {
                 toast.warning("This photo may be too dark — try again with flash.")
             }
+        }
+    }
+    const handleConfirmPhoto = async () => {
+        if (!preview) return
+
+        try {
+            const response = await fetch(preview)
+            const blob = await response.blob()
+            const file = new File([blob], `eye-${Date.now()}.jpg`, { type: blob.type })
+
+            const { data, error } = await supabase.storage
+                .from("eye-photos")
+                .upload(`photos/${file.name}`, file)
+
+            if (error) {
+                setUploadStatus(`❌ Upload failed: ${error.message}`)
+                toast.error("Upload failed.")
+            } else {
+                setUploadStatus(`✅ Uploaded to: ${data.path}`)
+                toast.success("Photo uploaded!")
+                setPreview(null)
+            }
+        } catch (err: any) {
+            setUploadStatus(`❌ Upload error: ${err.message}`)
+            toast.error("Something went wrong.")
         }
     }
 
@@ -80,12 +109,20 @@ export const PhotoCapture = () => {
             )}
 
             {preview && (
-                <div className="flex justify-center">
+                <div className="flex justify-center gap-4 mt-4">
                     <Button variant="outline" onClick={() => setPreview(null)}>
-                        Retake Photo
+                        ❌ Retake
+                    </Button>
+                    <Button variant="default" onClick={handleConfirmPhoto}>
+                        ✅ Looks Good
                     </Button>
                 </div>
+
             )}
+            {uploadStatus && (
+                <p className="text-sm text-center text-muted-foreground mt-2">{uploadStatus}</p>
+            )}
+
         </div>
     )
 }
