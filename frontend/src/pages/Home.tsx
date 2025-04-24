@@ -1,5 +1,5 @@
 import { Instructions } from "@/components/Instructions"
-import { PhotoCapture } from "@/components/Photocapture"
+import { PhotoCapture } from "@/components/PhotoCapture"
 
 export default function Home() {
     return (
