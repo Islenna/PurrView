@@ -38,7 +38,10 @@ export const PhotoCapture = () => {
         }
     }
     const handleConfirmPhoto = async () => {
-        if (!preview) return
+        if (!preview || !user?.id) {
+            toast.error("User not authenticated or photo missing.")
+            return
+        }
 
         try {
             const response = await fetch(preview)
@@ -55,18 +58,18 @@ export const PhotoCapture = () => {
                 return
             }
 
-            // ✅ Insert metadata + image path
             const { error: insertError } = await supabase.from("submissions").insert({
-                user_id: user?.id,
+                user_id: user.id,
                 pet_name: metadata.petName,
                 owner_first: metadata.firstName,
                 owner_last: metadata.lastName,
                 eye_side: metadata.eyeSide,
                 notes: metadata.notes,
-                image_path: data.path, // or data.path if you prefer internal
+                image_path: data.path,
             })
 
             if (insertError) {
+                console.error("Insert error:", insertError)
                 setUploadStatus(`❌ Upload succeeded but DB insert failed: ${insertError.message}`)
                 toast.error("Photo uploaded, but metadata save failed.")
                 return
@@ -77,6 +80,7 @@ export const PhotoCapture = () => {
             setPreview(null)
 
         } catch (err: any) {
+            console.error("Upload error:", err)
             setUploadStatus(`❌ Upload error: ${err.message}`)
             toast.error("Something went wrong.")
         }
