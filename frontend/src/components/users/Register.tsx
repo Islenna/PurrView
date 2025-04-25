@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 export default function Register() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const navigate = useNavigate()
 
     const handleRegister = async () => {
         const { error } = await supabase.auth.signUp({ email, password })
@@ -16,8 +18,10 @@ export default function Register() {
             toast.error(error.message)
         } else {
             toast.success("Account created! Check your email.")
+            navigate("/info")
         }
     }
+
 
     return (
         <div className="max-w-sm mx-auto mt-20 space-y-4">
