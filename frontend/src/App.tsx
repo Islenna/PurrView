@@ -5,6 +5,7 @@ import { PhotoCapture } from "@/components/PhotoCapture"
 import { Toaster } from "@/components/ui/sonner"
 import Login from "@/components/users/Login"
 import Register from "@/components/users/Register"
+import Confirm from "@/pages/Confirm"
 
 import {
   BrowserRouter as Router,
@@ -30,7 +31,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/info" element={<PrivateRoute><InfoForm /></PrivateRoute>} />
-
+          <Route path="/confirm" element={<Confirm />} />
           <Route path="/capture" element={<PhotoCapture />} />
           <Route path="/home" element={<Home />} /> {/* Optional */}
         </Routes>
