@@ -29,7 +29,7 @@ export default function InfoForm() {
 
     const handleSubmit = () => {
         sessionStorage.setItem("purrview-form", JSON.stringify(form))
-        navigate("/capture") // or whatever your capture route is
+        navigate("/capture")
     }
 
     return (

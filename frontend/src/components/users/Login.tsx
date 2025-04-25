@@ -18,7 +18,7 @@ export default function Login() {
             toast.error(error.message)
         } else {
             toast.success("Logged in!")
-            navigate("/") // or wherever you want to go post-login
+            navigate("/info") 
         }
     }
 
