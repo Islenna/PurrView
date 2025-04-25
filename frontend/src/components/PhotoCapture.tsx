@@ -4,16 +4,16 @@ import { PhotoOverlay } from "@/components/PhotoOverlay"
 import { checkBrightness } from "@/utils/checkImageQuality"
 import { toast } from "sonner"
 import { supabase } from "@/lib/supabaseClient"
-
+import { Instructions } from "./Instructions"
+import { useAuth } from "@/components/context/AuthContext"
 
 export const PhotoCapture = () => {
+    const { user } = useAuth()
     const [preview, setPreview] = useState<string | null>(null)
     const [isPortrait, setIsPortrait] = useState(false)
     const [uploadStatus, setUploadStatus] = useState<string | null>(null)
     const metadata = JSON.parse(sessionStorage.getItem("purrview-form") || "{}")
     console.log("Upload with metadata:", metadata)
-
-
     useEffect(() => {
         const checkOrientation = () => {
             setIsPortrait(window.innerHeight > window.innerWidth)
@@ -52,11 +52,30 @@ export const PhotoCapture = () => {
             if (error) {
                 setUploadStatus(`❌ Upload failed: ${error.message}`)
                 toast.error("Upload failed.")
-            } else {
-                setUploadStatus(`✅ Uploaded to: ${data.path}`)
-                toast.success("Photo uploaded!")
-                setPreview(null)
+                return
             }
+
+            // ✅ Insert metadata + image path
+            const { error: insertError } = await supabase.from("submissions").insert({
+                user_id: user?.id,
+                pet_name: metadata.petName,
+                owner_first: metadata.firstName,
+                owner_last: metadata.lastName,
+                eye_side: metadata.eyeSide,
+                notes: metadata.notes,
+                image_path: data.path, // or data.path if you prefer internal
+            })
+
+            if (insertError) {
+                setUploadStatus(`❌ Upload succeeded but DB insert failed: ${insertError.message}`)
+                toast.error("Photo uploaded, but metadata save failed.")
+                return
+            }
+
+            setUploadStatus(`✅ Uploaded to: ${data.path}`)
+            toast.success("Photo and metadata uploaded!")
+            setPreview(null)
+
         } catch (err: any) {
             setUploadStatus(`❌ Upload error: ${err.message}`)
             toast.error("Something went wrong.")
@@ -64,8 +83,10 @@ export const PhotoCapture = () => {
     }
 
 
+
     return (
         <div className="space-y-4">
+            <Instructions />
             <div className="flex flex-col items-center gap-2">
                 <label
                     htmlFor="file-upload"
