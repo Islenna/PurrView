@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { PhotoOverlay } from "@/components/PhotoOverlay"
-import { checkBrightness } from "@/utils/checkImageQuality"
+import { checkImageQuality } from "@/utils/checkImageQuality"
 import { toast } from "sonner"
 import { supabase } from "@/lib/supabaseClient"
 import { Instructions } from "./Instructions"
@@ -27,16 +27,26 @@ export const PhotoCapture = () => {
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
-        if (file) {
-            const objectURL = URL.createObjectURL(file)
-            setPreview(objectURL)
+        if (!file) return
 
-            const isBrightEnough = await checkBrightness(objectURL)
-            if (!isBrightEnough) {
-                toast.warning("This photo may be too dark — try again with flash.")
-            }
+        const objectURL = URL.createObjectURL(file)
+        const quality = await checkImageQuality(objectURL)
+
+        if (!quality.ok) {
+            const issues = []
+            if (quality.tooDark) issues.push("too dark")
+            if (quality.tooLowContrast) issues.push("blurry or low contrast")
+            if (quality.tooSmall) issues.push("too small")
+
+            const message = `Photo ${issues.join(", ")} — try again with flash, good light, and a steady hand.`
+            toast.warning(message)
+            return
         }
+
+        setPreview(objectURL)
     }
+
+
     const handleConfirmPhoto = async () => {
         if (!preview || !user?.id) {
             toast.error("User not authenticated or photo missing.")
