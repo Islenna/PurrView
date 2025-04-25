@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/sonner"
 import Login from "@/components/users/Login"
 import Register from "@/components/users/Register"
 import Confirm from "@/pages/Confirm"
-
+import Review from "@/pages/Review"
 import {
   BrowserRouter as Router,
   Routes,
@@ -14,6 +14,7 @@ import {
   Navigate,
 } from "react-router-dom"
 import { useAuth } from "@/components/context/AuthContext"
+import NavBar from "@/pages/NavBar"
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth()
@@ -26,12 +27,14 @@ function App() {
     <>
       <Toaster />
       <Router>
+        <NavBar />
         <Routes>
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/info" element={<PrivateRoute><InfoForm /></PrivateRoute>} />
           <Route path="/confirm" element={<Confirm />} />
+          <Route path="/review" element={<PrivateRoute><Review /></PrivateRoute>} />
           <Route path="/capture" element={<PhotoCapture />} />
           <Route path="/home" element={<Home />} /> {/* Optional */}
         </Routes>

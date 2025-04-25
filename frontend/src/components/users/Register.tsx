@@ -13,14 +13,28 @@ export default function Register() {
 
     const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        const { error } = await supabase.auth.signUp({ email, password })
+        const { data, error } = await supabase.auth.signUp({ email, password })
+
         if (error) {
             toast.error(error.message)
         } else {
             toast.success("Account created! Check your email.")
+
+            // 👤 Create profile record for new user
+            if (data.user) {
+                await supabase.from("profiles").insert({
+                    id: data.user.id,
+                    full_name: null,
+                    role: "owner",
+                })
+            }
+
             navigate("/info")
         }
     }
+
+
+
 
     return (
         <div className="max-w-sm mx-auto mt-20 space-y-4">
