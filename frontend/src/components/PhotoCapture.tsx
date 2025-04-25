@@ -10,6 +10,8 @@ export const PhotoCapture = () => {
     const [preview, setPreview] = useState<string | null>(null)
     const [isPortrait, setIsPortrait] = useState(false)
     const [uploadStatus, setUploadStatus] = useState<string | null>(null)
+    const metadata = JSON.parse(sessionStorage.getItem("purrview-form") || "{}")
+    console.log("Upload with metadata:", metadata)
 
 
     useEffect(() => {
