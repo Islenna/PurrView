@@ -21,8 +21,11 @@ export default function Review() {
             const { data, error } = await supabase
                 .from("submissions")
                 .select("*")
-                .is("photo_score", null)
+                .is("photo_score", null) // only check this
                 .order("created_at", { ascending: true })
+
+            console.log("Fetched submissions:", data)
+            console.log("Fetch error:", error)
 
             if (error) {
                 toast.error("Failed to fetch submissions")
@@ -32,6 +35,7 @@ export default function Review() {
 
             setLoading(false)
         }
+
 
         fetchSubmissions()
     }, [user])
@@ -87,14 +91,21 @@ export default function Review() {
                 </p>
             </div>
             <div className="space-y-2">
-                <Input
-                    type="number"
-                    placeholder="Score (1-5)"
+                <select
                     value={score ?? ""}
                     onChange={(e) => setScore(Number(e.target.value))}
-                    min={1}
-                    max={5}
-                />
+                    className="w-full border rounded px-3 py-2 text-sm text-muted-foreground"
+                >
+                    <option value="" disabled>
+                        Select a score (1–5)
+                    </option>
+                    <option value="1">1 — ❌ Unusable (blurry, obstructed, wrong target)</option>
+                    <option value="2">2 — ⚠️ Poor quality (difficult to interpret)</option>
+                    <option value="3">3 — ➖ Usable but not ideal</option>
+                    <option value="4">4 — ✅ Good quality</option>
+                    <option value="5">5 — 🩺 Diagnostic quality</option>
+                </select>
+
                 <Textarea
                     placeholder="Clinician notes..."
                     value={notes}
