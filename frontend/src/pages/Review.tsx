@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabaseClient"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Input } from "@/components/ui/input"
 import { useAuth } from "@/components/context/AuthContext"
 import { toast } from "sonner"
 
@@ -67,6 +66,17 @@ export default function Review() {
         setNotes("")
     }
 
+    const handleNext = () => {
+        if (current < submissions.length - 1) {
+            setCurrent(current + 1)
+            setScore(null)
+            setNotes("")
+        } else {
+            toast.info("No more submissions!")
+        }
+    }
+
+
     if (!user || (user.role !== "clinician" && user.role !== "superuser")) {
         return <p className="text-center mt-10">You do not have access to this page.</p>
     }
@@ -111,9 +121,15 @@ export default function Review() {
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                 />
-                <Button onClick={handleSubmit} className="w-full">
-                    Submit Review
-                </Button>
+                <div className="flex gap-2">
+                    <Button variant="outline" onClick={handleNext} className="flex-1">
+                        ➡️ Next
+                    </Button>
+                    <Button onClick={handleSubmit} className="flex-1">
+                        ✅ Submit Review
+                    </Button>
+                </div>
+
             </div>
         </div>
     )
