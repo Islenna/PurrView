@@ -24,7 +24,8 @@ export default function Register() {
             if (data.user) {
                 await supabase.from("profiles").insert({
                     id: data.user.id,
-                    full_name: null,
+                    email: data.user.email,
+                    full_name: null,             // still null for now
                     role: "owner",
                 })
             }
@@ -32,6 +33,7 @@ export default function Register() {
             navigate("/info")
         }
     }
+
 
 
 
